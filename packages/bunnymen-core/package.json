@@ -4,12 +4,19 @@
   "private": true,
   "type": "module",
   "source": "src/index.ts",
-  "main": "dist/main.cjs",
-  "module": "dist/module.js",
-  "types": "dist/types.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "repository": "git@github.com:element-fi/bunneymen.git",
   "scripts": {
     "build": "parcel build",
