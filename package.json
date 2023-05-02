@@ -33,8 +33,5 @@
   "dependencies": {
     "yarn": "^1.22.19"
   },
-  "packageManager": "yarn@1.22.19",
-  "lint-staged": {
-    "{apps,packages}/**/*.{js,jsx,ts,tsx,md,html,json}": "prettier --write"
-  }
+  "packageManager": "yarn@1.22.19"
 }

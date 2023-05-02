@@ -1,7 +1,7 @@
 // @ts-ignore
 import { BunnymenDB, Node } from 'bunnymen'
-import { ChatDataset } from './chatDataset'
-import { htmlSource, scriptTag } from './constants'
+import { chatDataset } from './chatDataset'
+import { externalScriptsSrc, htmlSrc } from './constants'
 
 const node = new Node()
 // @ts-ignore
@@ -11,8 +11,8 @@ export async function init() {
   const key = 'chat'
   await node.start()
   const db = new BunnymenDB()
-  const chatDataset = new ChatDataset(node, 50)
-  db.registerDatasets(key, chatDataset)
+  const dataset = chatDataset(node, 50)
+  db.registerDatasets(key, dataset)
   await db.init()
   db.subscribe(key, (messages) => {
     console.log(`${key} updated:`, messages)
@@ -27,17 +27,15 @@ init().then((db) => {
 })
 
 const range = document.createRange()
-
 // @ts-ignore
-range.selectNode(document.getElementsByTagName('div').item(0))
-const documentFragment = range.createContextualFragment(htmlSource)
+range.selectNode(document.getElementById('app'))
+const documentFragment = range.createContextualFragment(externalScriptsSrc)
 document.body.appendChild(documentFragment)
 
 setTimeout(() => {
   const range = document.createRange()
-
   // @ts-ignore
-  range.selectNode(document.getElementsByTagName('div').item(0))
-  const documentFragment = range.createContextualFragment(scriptTag)
-  window.document.body.appendChild(documentFragment)
+  range.selectNode(document.getElementById('app'))
+  const documentFragment = range.createContextualFragment(htmlSrc)
+  document.body.appendChild(documentFragment)
 }, 3000)

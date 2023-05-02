@@ -1,15 +1,14 @@
-export const externalScriptsSrc = `
 <script src="https://cdn.jsdelivr.net/npm/jquery"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/jquery.terminal.min.js"></script>
-<script src="https://cdn.jsdelivr.net/combine/npm/js-polyfills/keyboard.js,gh/jcubic/static/js/wcwidth.js"></script>`
-
-export const htmlSrc = `
 <link
-href="https://cdn.jsdelivr.net/npm/jquery.terminal/css/jquery.terminal.min.css"
-rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/jquery.terminal/css/jquery.terminal.min.css"
+  rel="stylesheet"
 />
+<script src="https://cdn.jsdelivr.net/combine/npm/js-polyfills/keyboard.js,gh/jcubic/static/js/wcwidth.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="generator" content="Gaiman 1.0.0-beta.3" />
 <style>
-:root {
+  :root {
     --color: #ccc;
     --background: black;
     --link-color: #3377ff;
@@ -20,14 +19,14 @@ rel="stylesheet"
     --font: monospace;
     --options: {
     } /* JSON config for jQuery Terminal */
-}
-body {
+  }
+  body {
     margin: 0;
     padding: 0;
-}
-#term {
+  }
+  #term {
     height: 100vh;
-}
+  }
 </style>
 <template id="greetings">
 ......................................................................
@@ -71,141 +70,140 @@ body {
 </template>
 <div id="term"></div>
 <script>
-var is_iframe = (function () {
+  var is_iframe = (function () {
     try {
-    return window.self !== window.top
+      return window.self !== window.top
     } catch (e) {
-    return true
+      return true
     }
-})()
-if (is_iframe) {
+  })()
+  if (is_iframe) {
     window.onerror = function (message, source, lineno, colno, error) {
-    window.parent.postMessage({
+      window.parent.postMessage({
         message,
         source,
         lineno,
         colno,
-    })
-    throw error
+      })
+      throw error
     }
-}
+  }
 
-var term
-var initialized = false
-var peers = []
-let helped = false
+  var term
+  var initialized = false
+  var peers = []
+  let helped = false
 
-function ready() {
+  function ready() {
     term = $('#term').terminal(
-    function (cmd, ...args) {
+      function (cmd, ...args) {
         this.list = () => {
-        if (peers.length === 0) {
+          if (peers.length === 0) {
             this.echo('[[;rgba(205,205,0,.99);]No peers connected]')
             return
-        }
+          }
 
-        var sessionString = ''
-        for (let i = 0; i < peers.length; i++) {
+          var sessionString = ''
+          for (let i = 0; i < peers.length; i++) {
             sessionString +=
-            '\\n[[;rgba(205,205,0,.99);]connected: bunnyman '
+              '\n[[;rgba(205,205,0,.99);]connected: bunnyman '
             sessionString += peers[i]
-        }
+          }
 
-        this.echo('Current sessions...\\n' + sessionString)
-        return
+          this.echo('Current sessions...\n' + sessionString)
+          return
         }
 
         this.error = (msg) => {
-        this.echo(
+          this.echo(
             "[[b;red;black);]Error: ' + 'msg " +
-            msg +
-            ' does not exist. Enter help to get started]',
-        )
+              msg +
+              ' does not exist. Enter help to get started]',
+          )
         }
 
         if (cmd === 'chat' && !initialized) {
-        initialized = true
+          initialized = true
         }
 
         if (cmd === 'ls') {
-        return this.list()
+          return this.list()
         }
 
         if (cmd === 'help') {
-        this.echo(
-            "[[;rgba(0, 100, 100);black]\\n\\nWelcome to Bunnymen.\\n\\nThe website and data on this page are all shared with you by other browser visitors.\\nYou are now sharing this data and also serving up the HTML for this site to other visitors.\\nBunnymen uses your browser to become a node and peer directly with other browsers.\\n\\nWe don't have to use centralized services.\\n\\nA few usecaes:\\n-Decentralized Frontends\\n-Reduced reliance on node providers\\n-User safety and data sovereignty\\n\\nThis is a chat application, your privacy is maintained.\\n\\nYou may now chat...]",
-        )
-        helped = true
-        return
+          this.echo(
+            "[[;rgba(0, 100, 100);black]\n\nWelcome to Bunnymen.\n\nThe website and data on this page are all shared with you by other browser visitors.\nYou are now sharing this data and also serving up the HTML for this site to other visitors.\nBunnymen uses your browser to become a node and peer directly with other browsers.\n\nWe don't have to use centralized services.\n\nA few usecaes:\n-Decentralized Frontends\n-Reduced reliance on node providers\n-User safety and data sovereignty\n\nThis is a chat application, your privacy is maintained.\n\nYou may now chat...]",
+          )
+          helped = true
+          return
         }
 
         if (['mkdir', 'cd', 'ps', 'grep', 'ssh', 'curl'].includes(cmd)) {
-        this.echo(
-            '[[;rgba(205,205,0,0.99);]Stay Tuned, these commands and many more are coming... \\nWe believe in a world where data is open and you have direct access. Consider this your future terminal.]',
-        )
+          this.echo(
+            '[[;rgba(205,205,0,0.99);]Stay Tuned, these commands and many more are coming... \nWe believe in a world where data is open and you have direct access. Consider this your future terminal.]',
+          )
         }
 
         if (helped) {
-        window.bunnymenDB.set('chat', [cmd])
-        return
+          window.bunnymenDB.set('chat', [cmd])
+          return
         }
 
         if (!initialized) {
-        return this.error(cmd)
+          return this.error(cmd)
         }
-    },
-    {
+      },
+      {
         onInit() {
-        this.echo(
-            '\\n[[b;green;black);]Bunnymen vBeta0.0.] Welcome Anon\\n',
-        )
-        this.echo(
-            '\\n[[;rgba(0, 100, 100);black]Enter help to get started...]',
-        )
-        this.echo(
-            '\\n[[;rgba(0, 100, 100);black]Enter ls to list your peers...]',
-        )
+          this.echo(
+            '\n[[b;green;black);]Bunnymen vBeta0.0.] Welcome Anon\n',
+          )
+          this.echo(
+            '\n[[;rgba(0, 100, 100);black]Enter help to get started...]',
+          )
+          this.echo(
+            '\n[[;rgba(0, 100, 100);black]Enter ls to list your peers...]',
+          )
         },
         greetings: greetings.innerHTML,
         prompt: '[[;rgba(0, 100, 100);black]>>> ]',
-    },
+      },
     )
-}
+  }
 
-setTimeout(ready, 5)
-let prevLength = 0
-let currentLength
+  setTimeout(ready, 5)
+  let prevLength = 0
+  let currentLength
 
-window.bunnymenDB.subscribe('chat', (messages) => {
+  window.bunnymenDB.subscribe('chat', (messages) => {
     if (helped) {
-    currentLength = messages.data.length
-    if (prevLength === 50) {
+      currentLength = messages.data.length
+      if (prevLength === 50) {
         const lastMessage = messages.data[49]
         term.echo(
-        new Date(lastMessage.timestamp).toISOString() +
+          new Date(lastMessage.timestamp).toISOString() +
             ' [[b;blue;black);]Node: ' +
             lastMessage.user +
             ': ]' +
             lastMessage.content,
         )
-    } else {
+      } else {
         for (let key = prevLength; key <= prevLength; key++) {
-        term.echo(
+          term.echo(
             new Date(messages.data[key].timestamp).toISOString() +
-            ' [[b;blue;black);]Node: ' +
-            messages.data[key].user +
-            ': ]' +
-            messages.data[key].content,
-        )
+              ' [[b;blue;black);]Node: ' +
+              messages.data[key].user +
+              ': ]' +
+              messages.data[key].content,
+          )
         }
-    }
+      }
     }
     prevLength = currentLength
-})
+  })
 
-window.bunnyNode.on('peerSubscribed', (hash) => {
+  window.bunnyNode.on('peerSubscribed', (hash) => {
     peers.push(hash)
     term.echo('[[b;yellow;black);]Node ' + hash + ' subscribed')
-})
+  })
 </script>
-`

@@ -1,0 +1,20 @@
+{
+  "name": "bunnymen-examples",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "helloWorld": "ts-node-esm examples/helloWorld.ts"
+  },
+  "dependencies": {
+    "bunnymen": "*"
+  },
+  "devDependencies": {
+    "@tsconfig/esm": "^1.0.2",
+    "@tsconfig/node16": "^1.0.3",
+    "@tsconfig/node16-strictest-esm": "^1.0.3",
+    "ts-node": "^10.9.1",
+    "tsconfig": "*",
+    "typescript": "^4.9.4"
+  }
+}
