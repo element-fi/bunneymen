@@ -11,7 +11,7 @@ export interface IBunnymenDB {
   subscribe: (key: string, handler: (data: any) => void) => void
 }
 
-export interface IBunnymentEvents {
+export interface IBunnymenEvents {
   /**
    * Fired when init is complete.
    */
@@ -23,13 +23,13 @@ export class BunnymenDB extends EventEmitter implements IBunnymenDB {
   private transformers: Record<string | never, Transformer> = {}
   private untypedOn = this.on
   private untypedEmit = this.emit
-  public override on = <K extends keyof IBunnymentEvents>(
+  public override on = <K extends keyof IBunnymenEvents>(
     event: K,
-    listener: IBunnymentEvents[K],
+    listener: IBunnymenEvents[K],
   ): this => this.untypedOn(event, listener)
-  public override emit = <K extends keyof IBunnymentEvents>(
+  public override emit = <K extends keyof IBunnymenEvents>(
     event: K,
-    ...args: Parameters<IBunnymentEvents[K]>
+    ...args: Parameters<IBunnymenEvents[K]>
   ): boolean => this.untypedEmit(event, ...args)
 
   get peers() {
@@ -41,11 +41,13 @@ export class BunnymenDB extends EventEmitter implements IBunnymenDB {
     super()
   }
 
+  // TODO: Remove ambiguity between setting and appending
   registerDatasets(key: string, ...datasets: IDataset[]) {
     this.datasets[key] = datasets
     return true
   }
 
+  // TODO: Multiple transformers for a single key
   registerTransformer(key: string, transformer: Transformer) {
     this.transformers[key] = transformer
     return true
@@ -87,6 +89,7 @@ export class BunnymenDB extends EventEmitter implements IBunnymenDB {
    * This calls `set()` on every dataset registered for the key. To only update
    * a single one, call `set()` on the dataset directly.
    */
+  // TODO: Remove ambiguity between keys representing a single dataset and multiple datasets
   async set(key: string, data: any) {
     const datasets = this.datasets[key]
     if (datasets) {
@@ -99,7 +102,9 @@ export class BunnymenDB extends EventEmitter implements IBunnymenDB {
   subscribe(key: string, handler: (data: any) => void) {
     const datasets = this.datasets[key]
 
-    // what happens if a dataset is registered after I've already subscribed?
+    // TODO: what happens if a dataset is registered after I've already
+    // subscribed?
+    // We could track the key => handler mapping and check it when registering
     if (!datasets) {
       return
     }

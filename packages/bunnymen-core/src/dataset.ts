@@ -17,7 +17,7 @@ export interface IDatasetEvents<TData = any> {
   updated: (payload: IPayload<TData>) => void
 }
 
-export interface IDatasetOptions<TRawData = any> {
+export interface IDatasetOptions<TData = any, TRawData = TData> {
   initializer?: Fetcher<undefined, TRawData>
   initialContentId?: string
   /**
@@ -29,6 +29,7 @@ export interface IDatasetOptions<TRawData = any> {
    * Used to decide if data from a peer is valid and should be accepted.
    */
   validator?: Validator
+  cache?: Cache<IPayload<TData>>
 }
 
 export interface IDataset<TData = any, TRawData = TData> extends EventEmitter {
@@ -52,7 +53,6 @@ export class Dataset<TData = any, TRawData = TData>
   implements IDataset<TData, TRawData>
 {
   private node: Node
-  // keep this around to rerun during validation
   private initializer: Fetcher<undefined, TRawData>
   private fetcher: Fetcher<TData, TRawData>
   private validator: Validator
@@ -84,11 +84,15 @@ export class Dataset<TData = any, TRawData = TData>
   // unix timestamp
   lastUpdated = 0
 
-  constructor(
+  /**
+   * The constructor is private to enforce the use of the factory method
+   * `create`, which will ensure that the generic types are correctly inferred.
+   */
+  private constructor(
     node: Node,
     fetcher: Fetcher,
     loader: ILoader,
-    options?: IDatasetOptions<TRawData>,
+    options?: IDatasetOptions<TData, TRawData>,
   ) {
     super()
     const {
@@ -96,6 +100,7 @@ export class Dataset<TData = any, TRawData = TData>
       initialContentId,
       frequency = 'static',
       validator = () => true,
+      cache = new Cache(),
     } = options || {}
 
     this.node = node
@@ -104,18 +109,18 @@ export class Dataset<TData = any, TRawData = TData>
     this.validator = validator
     this.loader = loader
     this.currentCID = initialContentId
-    this.cache = new Cache()
+    this.cache = cache
     this.frequency = frequency
   }
 
   /**
-   * Factory method to return a strongly typed instance.
+   * Factory method with strong typing.
    */
   static create<TData = any, TRawData = TData>(
     node: Node,
     fetcher: Fetcher<TData, TRawData>,
     loader: ILoader<TData, TRawData>,
-    options?: IDatasetOptions<TRawData>,
+    options?: IDatasetOptions<TData, TRawData>,
   ): Dataset<TData, TRawData> {
     return new Dataset(node, fetcher, loader, options)
   }
